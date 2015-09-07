@@ -294,6 +294,8 @@
      *  Arranges the grid.
      */
     arrange: function () {
+      this._trigger('beforeArrange', null);
+
       // Container is the object on which the widget is initialized.
       var container = this.element;
       var containerWidth = container.width();
@@ -379,6 +381,7 @@
       movedItem.insertBefore(droppable);
       this.arrange();
 
+      this._trigger('afterDrop', null);
     },
 
     /**
