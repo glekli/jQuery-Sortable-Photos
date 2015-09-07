@@ -410,10 +410,8 @@
         items.droppable({
           scope: 'jq-sortable-photos-' + this.containerId,
           tolerance: 'pointer',
-          drop: function (event, ui) {
-            var movedItem = $(ui.draggable).detach();
-            movedItem.insertBefore(this);
-            self.arrange();
+          drop: function(event, ui) {
+            self._onDrop(this, ui);
           }
         });
       }
