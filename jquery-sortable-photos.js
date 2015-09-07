@@ -362,6 +362,22 @@
     },
 
     /**
+     * Called after an item is dropped.
+     * (Used as callback for the 'drop' event of the droppable widget.)
+     *
+     * @param droppable
+     *   Droppable widget.
+     * @param ui
+     *   Data object from the droppable event.
+     */
+    _onDrop: function(droppable, ui) {
+      var movedItem = $(ui.draggable).detach();
+      movedItem.insertBefore(droppable);
+      this.arrange();
+
+    },
+
+    /**
      * Constructor.
      */
     _create: function() {
