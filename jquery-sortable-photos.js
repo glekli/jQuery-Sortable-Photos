@@ -13,12 +13,17 @@
   /**
    * Constructor for the grid object.
    *
+   * @param element
+   *   The element on which the widget is initialized.
+   * @param gridId
+   *   A unique id for this grid.
    * @param width
    *   The total width of the grid that the each row must fit.
    * @param padding
    *   Padding between items in pixels.
    */
-  var grid = function (gridId, width, padding) {
+  var grid = function (element, gridId, width, padding) {
+    this.element = element;
     this.gridId = gridId;
     this.width = width;
     this.padding = (typeof padding !== 'undefined' ? padding : 1);
@@ -33,14 +38,14 @@
     /**
      * Creates a new row and adds it to the grid object.
      *
-     * @returns {Drupal.viewsPhotoGrid.gridRow}
+     * @returns {gridRow}
      *   The new row.
      */
     createRow: function () {
       // Use array index as id. Id is used in the calculation to determine
       // position so it needs to be sequential.
       var rowId = this.rows.length;
-      var row = new Drupal.viewsPhotoGrid.gridRow(rowId, this.width, this.padding);
+      var row = new gridRow(rowId, this.width, this.padding);
       this.rows.push(row);
       return row;
     },
@@ -61,7 +66,7 @@
       }
 
       // Set the height on the container
-      $('#views-photo-grid-' + this.gridId).css('height', currentPos + 'px');
+      this.element.css('height', currentPos + 'px');
     }
 
   }); // $.extend(grid.prototype, {...})
@@ -102,7 +107,7 @@
      *   The original height of the image contained in this grid item.
      */
     createItem: function (itemId, width, height) {
-      var item = new Drupal.viewsPhotoGrid.gridItem(itemId);
+      var item = new gridItem(itemId);
       item.width = width;
       item.height = height;
       item.displayWidth = width;
@@ -238,7 +243,8 @@
         }
 
         // Apply placement.
-        var elem = $('#views-photo-grid-' + this.items[i].itemId);
+        // @TODO: Remove css id reference.
+        var elem = $('#jq-sortable-photos-' + this.items[i].itemId);
         elem.attr('data-row-id', this.rowId);
         elem.css('top', top + 'px');
         elem.css('left', currentPos + 'px');
@@ -294,14 +300,15 @@
 
       // Create grid objects.
       var gridPadding = parseInt(this.options.padding);
-      var grid = new grid(this.containerId, containerWidth, gridPadding);
-      var row = grid.createRow();
+      var currentGrid = new grid(container, this.containerId, containerWidth, gridPadding);
+      var row = currentGrid.createRow();
+      var containerId = this.containerId;
 
       // Find grid items and create rows.
       container.find(this.options.selector).each(function (itemIndex) {
 
         // Create a unique id for this grid item.
-        var itemId = this.containerId + '-' + itemIndex;
+        var itemId = containerId + '-' + itemIndex;
         $(this).attr('id', 'jq-sortable-photos-' + itemId);
 
         var img = $(this).find('img');
@@ -316,13 +323,13 @@
         if (row.isFull()) {
           // This item is the last one that fits the container.
           // Start a new row.
-          row = grid.createRow();
+          row = currentGrid.createRow();
         }
 
       }); // container.find().each()
 
       // Render.
-      grid.render();
+      currentGrid.render();
 
     }, // arrangeGrid()
 
@@ -334,18 +341,23 @@
      * @returns {Function}
      *   Event handler.
      */
-    getTriggerHandler: function () {
+    _getTriggerHandler: function () {
       var timer;
+      var self = this;
 
-      return function () {
-        if (timer) {
-          clearTimeout(timer);
-        }
+      if (!this.triggerHandler) {
+        this.triggerHandler = function () {
+          if (timer) {
+            clearTimeout(timer);
+          }
 
-        timer = setTimeout(function () {
-          Drupal.behaviors.viewsPhotoGrid.arrangeGrid();
-        }, 50);
-      };
+          timer = setTimeout(function () {
+            self.arrange();
+          }, 100);
+        };
+      }
+
+      return this.triggerHandler;
     },
 
     /**
@@ -353,15 +365,26 @@
      */
     _create: function() {
       this.containerId = containerId++;
-
-      var triggerHandler = this.getTriggerHandler();
+      var triggerHandler = this._getTriggerHandler();
 
       // Arrange grid items.
       this.arrange();
 
       // Attach event listeners to trigger grid rearrangement when necessary.
-      $('.views-photo-grid-item img').bind('load', triggerHandler);
+      this.element.find('img').bind('load', triggerHandler);
       $(window).bind('resize', triggerHandler);
+    },
+
+    /**
+     * Destructor.
+     */
+    destroy: function() {
+      $.Widget.prototype.destroy.apply(this, arguments);
+      var triggerHandler = this._getTriggerHandler();
+
+      // Detach event listeners.
+      this.element.find('img').unbind('load', triggerHandler);
+      $(window).unbind('resize', triggerHandler);
     }
 
   }); // $.widget()
