@@ -274,7 +274,7 @@
 
   // Keeps track of the created containers.
   // Used to assign a unique id to each.
-  var containerId = 0;
+  var nextContainerId = 0;
 
   /**
    * Registers the jQuery UI widget.
@@ -282,6 +282,7 @@
   $.widget('glekli.sortablePhotos', {
     options: {
       selector: '> *',
+      sortable: true,
       padding: 2
     },
 
@@ -289,10 +290,10 @@
      *  Arranges the grid.
      */
     arrange: function () {
-
       // Container is the object on which the widget is initialized.
       var container = this.element;
       var containerWidth = container.width();
+      var items = container.find(this.options.selector);
 
       // Create a unique id for this grid container.
       // @TODO: Is this necessary?
@@ -305,11 +306,11 @@
       var containerId = this.containerId;
 
       // Find grid items and create rows.
-      container.find(this.options.selector).each(function (itemIndex) {
-
+      items.each(function (itemIndex) {
         // Create a unique id for this grid item.
         var itemId = containerId + '-' + itemIndex;
         $(this).attr('id', 'jq-sortable-photos-' + itemId);
+        $(this).addClass('jq-sortable-photos-item');
 
         var img = $(this).find('img');
 
@@ -364,11 +365,33 @@
      * Constructor.
      */
     _create: function() {
-      this.containerId = containerId++;
+      this.containerId = nextContainerId++;
       var triggerHandler = this._getTriggerHandler();
+      var items = this.element.find(this.options.selector);
+      var self = this;
 
       // Arrange grid items.
       this.arrange();
+
+      if (this.options.sortable) {
+        items.draggable({
+          scope: 'jq-sortable-photos-' + this.containerId,
+          stack: '.jq-sortable-photos-item', // Maintains z-indexes.
+          revert: 'invalid',
+          opacity: 0.6,
+          containment: 'parent'
+        });
+
+        items.droppable({
+          scope: 'jq-sortable-photos-' + this.containerId,
+          tolerance: 'pointer',
+          drop: function (event, ui) {
+            var movedItem = $(ui.draggable).detach();
+            movedItem.insertBefore(this);
+            self.arrange();
+          }
+        });
+      }
 
       // Attach event listeners to trigger grid rearrangement when necessary.
       this.element.find('img').bind('load', triggerHandler);
