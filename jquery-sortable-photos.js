@@ -1,5 +1,8 @@
 /*
- * jQuery Sortable Photos
+ * jQuery Sortable Photos 1.0
+ * https://github.com/glekli/jQuery-Sortable-Photos
+ *
+ * Sortable photo grid widget for jQuery UI.
  *
  * Depends:
  *	jquery.ui.core.js
@@ -246,6 +249,7 @@
         // @TODO: Remove css id reference.
         var elem = $('#jq-sortable-photos-' + this.items[i].itemId);
         elem.attr('data-row-id', this.rowId);
+        elem.css('position', 'absolute');
         elem.css('top', top + 'px');
         elem.css('left', currentPos + 'px');
         elem.find('img').css('width', this.items[i].displayWidth + 'px');
@@ -385,6 +389,8 @@
       var triggerHandler = this._getTriggerHandler();
       var items = this.element.find(this.options.selector);
       var self = this;
+
+      this.element[0].style.position = 'relative';
 
       // Arrange grid items.
       this.arrange();
