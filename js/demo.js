@@ -9,7 +9,12 @@ $(function () {
     var count = (gridSize == 'small' ? 30 : 15);
 
     // Unload widget, clear content.
-    $('.photo-grid-container').sortablePhotos('destroy');
+    try {
+      // Later versions of jQuery UI throw error if
+      // the widget is not yet initialized.
+      $('.photo-grid-container').sortablePhotos('destroy');
+    } catch (exception) {}
+
     $('.photo-grid-container').empty();
 
     // Generate random-sized images.
