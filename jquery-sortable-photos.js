@@ -332,16 +332,16 @@
           row = currentGrid.createRow();
         }
 
-      }); // container.find().each()
+      }); // items.each()
 
       // Render.
       currentGrid.render();
 
-    }, // arrangeGrid()
+    }, // arrange()
 
     /**
      * Returns a function that can be used as an event handler.
-     * The function triggers arrangeGrid() and ensures that it's not triggered
+     * The function triggers arrange() and ensures that it's not triggered
      * too frequently.
      *
      * @returns {Function}
