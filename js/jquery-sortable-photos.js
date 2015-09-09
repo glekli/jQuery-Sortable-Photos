@@ -102,15 +102,15 @@
      * Creates and adds an item to the row. Keeps track of the width used by
      * the item.
      *
-     * @param itemId
-     *   The item's id. Added to the dom elements for identification purposes.
+     * @param element
+     *   The jQuery object representing the item.
      * @param width
      *   The original width of the image contained in this grid item.
      * @param height
      *   The original height of the image contained in this grid item.
      */
-    createItem: function (itemId, width, height) {
-      var item = new gridItem(itemId);
+    createItem: function (element, width, height) {
+      var item = new gridItem(element);
       item.width = width;
       item.height = height;
       item.displayWidth = width;
@@ -246,8 +246,7 @@
         }
 
         // Apply placement.
-        // @TODO: Remove css id reference.
-        var elem = $('#jq-sortable-photos-' + this.items[i].itemId);
+        var elem = this.items[i].element
         elem.attr('data-row-id', this.rowId);
         elem.css('position', 'absolute');
         elem.css('top', top + 'px');
@@ -265,11 +264,11 @@
   /**
    * Constructor for the row item object.
    *
-   * @param itemId
-   *   The item's id.
+   * @param element
+   *   The jQuery object representing the item.
    */
-  var gridItem = function (itemId) {
-    this.itemId = itemId;
+  var gridItem = function (element) {
+    this.element = element;
     this.width = 0;
     this.height = 0;
     this.displayWidth = 0;
@@ -294,37 +293,37 @@
      *  Arranges the grid.
      */
     arrange: function () {
-      this._trigger('beforeArrange', null);
+      this._trigger('beforeArrange', null, this.element);
 
       // Container is the object on which the widget is initialized.
       var container = this.element;
       var containerWidth = container.width();
+      var containerId = this.containerId;
+      var gridPadding = parseInt(this.options.padding);
       var items = container.find(this.options.selector);
 
       // Create a unique id for this grid container.
-      // @TODO: Is this necessary?
-      container.attr('id', 'jq-sortable-photos-' + this.containerId);
+      container.attr('data-jq-sortable-photos-grid-id', containerId);
 
       // Create grid objects.
-      var gridPadding = parseInt(this.options.padding);
-      var currentGrid = new grid(container, this.containerId, containerWidth, gridPadding);
+      var currentGrid = new grid(container, containerId, containerWidth, gridPadding);
       var row = currentGrid.createRow();
-      var containerId = this.containerId;
 
       // Find grid items and create rows.
       items.each(function (itemIndex) {
         // Create a unique id for this grid item.
         var itemId = containerId + '-' + itemIndex;
-        $(this).attr('id', 'jq-sortable-photos-' + itemId);
-        $(this).addClass('jq-sortable-photos-item');
+        var itemElement = $(this);
+        itemElement.attr('data-grid-item-id', itemId);
+        itemElement.addClass('jq-sortable-photos-item');
 
-        var img = $(this).find('img');
+        var img = itemElement.find('img');
 
         // Remove css so that the actual size can be determined.
-        $(this).find('img').css('height', '');
-        $(this).find('img').css('width', '');
+        img.css('height', '');
+        img.css('width', '');
 
-        row.createItem(itemId, img.width(), img.height());
+        row.createItem(itemElement, img.width(), img.height());
 
         // Check if adding this item has used up all the space.
         if (row.isFull()) {
@@ -333,16 +332,16 @@
           row = currentGrid.createRow();
         }
 
-      }); // container.find().each()
+      }); // items.each()
 
       // Render.
       currentGrid.render();
 
-    }, // arrangeGrid()
+    }, // arrange()
 
     /**
      * Returns a function that can be used as an event handler.
-     * The function triggers arrangeGrid() and ensures that it's not triggered
+     * The function triggers arrange() and ensures that it's not triggered
      * too frequently.
      *
      * @returns {Function}
@@ -352,8 +351,8 @@
       var timer;
       var self = this;
 
-      if (!this.triggerHandler) {
-        this.triggerHandler = function () {
+      if (!this._triggerHandler) {
+        this._triggerHandler = function () {
           if (timer) {
             clearTimeout(timer);
           }
@@ -364,7 +363,7 @@
         };
       }
 
-      return this.triggerHandler;
+      return this._triggerHandler;
     },
 
     /**
@@ -381,8 +380,8 @@
       movedItem.insertBefore(droppable);
       this.arrange();
 
-      // http://code.tutsplus.com/tutorials/coding-your-first-jquery-ui-plugin--net-9460
-      this._trigger('afterDrop', null);
+      // Trigger event so that third parties have a chance to process the result.
+      this._trigger('afterDrop', null, this.element);
     },
 
     /**
