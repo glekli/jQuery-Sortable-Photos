@@ -293,7 +293,7 @@
      *  Arranges the grid.
      */
     arrange: function () {
-      this._trigger('beforeArrange', null);
+      this._trigger('beforeArrange', null, this.element);
 
       // Container is the object on which the widget is initialized.
       var container = this.element;
@@ -380,7 +380,8 @@
       movedItem.insertBefore(droppable);
       this.arrange();
 
-      this._trigger('afterDrop', null);
+      // Trigger event so that third parties have a chance to process the result.
+      this._trigger('afterDrop', null, this.element);
     },
 
     /**
