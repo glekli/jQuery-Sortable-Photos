@@ -351,8 +351,8 @@
       var timer;
       var self = this;
 
-      if (!this.triggerHandler) {
-        this.triggerHandler = function () {
+      if (!this._triggerHandler) {
+        this._triggerHandler = function () {
           if (timer) {
             clearTimeout(timer);
           }
@@ -363,7 +363,7 @@
         };
       }
 
-      return this.triggerHandler;
+      return this._triggerHandler;
     },
 
     /**
