@@ -45,8 +45,7 @@
      *   The new row.
      */
     createRow: function () {
-      // Use array index as id. Id is used in the calculation to determine
-      // position so it needs to be sequential.
+      // Use array index as id.
       var rowId = this.rows.length;
       var row = new gridRow(rowId, this.width, this.padding);
       this.rows.push(row);
@@ -200,6 +199,9 @@
 
     /**
      * Renders the row. Applies CSS to the items in the row.
+     *
+     * @param top
+     *   Vertical position to apply to the items.
      */
     render: function (top) {
       if (this.items.length == 0) {
@@ -376,6 +378,10 @@
      *   Data object from the droppable event.
      */
     _onDrop: function(droppable, ui) {
+      // Move the dragged item to the new position in the DOM
+      // and rearrange the items.
+      // Need to use .detach() to keep the event listeners added
+      // by jQuery UI.
       var movedItem = $(ui.draggable).detach();
       movedItem.insertBefore(droppable);
       this.arrange();
@@ -423,10 +429,15 @@
 
     /**
      * Destructor.
+     *
+     * For jQuery UI <1.9 compatibility, the .destroy() method needs
+     * to be overridden. (Later versions use ._destroy() instead.)
      */
     destroy: function() {
-      $.Widget.prototype.destroy.apply(this, arguments);
       var triggerHandler = this._getTriggerHandler();
+
+      // Invoke the parent implementation.
+      $.Widget.prototype.destroy.apply(this, arguments);
 
       // Detach event listeners.
       this.element.find('img').unbind('load', triggerHandler);
