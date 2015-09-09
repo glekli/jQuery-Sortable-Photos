@@ -16,7 +16,8 @@ http://glekli.github.io/jQuery-Sortable-Photos/
 
 ## Installation
 
-Include the javascript file on pages where needed. Be sure to include it
+* [Download](https://github.com/glekli/jQuery-Sortable-Photos/releases) the latest release.
+* Include the javascript file on pages where needed. Be sure to include it
 after jQuery and jQuery UI.
 
 ```html
@@ -72,6 +73,9 @@ The amount of padding in between the images in pixels.
 A callback function that gets called after the user has dropped an image to a new position.
 You can use this callback to process the new order of images.
 
+The function receives two arguments: `event` is a jQuery event object, and `element` is a jQuery object
+containing the element on which the plugin has been initialized.
+
 **Default:** undefined
 
 **Example:**
@@ -80,7 +84,7 @@ You can use this callback to process the new order of images.
 $('.my-container').sortablePhotos({
   selector: '> .my-item',
   sortable: true,
-  afterDrop: function (event) {
+  afterDrop: function (event, element) {
     // Save new order.
   }
 });
@@ -91,6 +95,9 @@ $('.my-container').sortablePhotos({
 A callback function that gets called before the images are arranged. You can use this to
 modify the content before the plugin processes it if needed.
 
+The function receives two arguments: `event` is a jQuery event object, and `element` is a jQuery object
+containing the element on which the plugin has been initialized.
+
 **Default:** undefined
 
 **Example:**
@@ -99,7 +106,7 @@ modify the content before the plugin processes it if needed.
 $('.my-container').sortablePhotos({
   selector: '> .my-item',
   sortable: true,
-  beforeArrange: function (event) {
+  beforeArrange: function (event, element) {
     // Modify content.
   }
 });
