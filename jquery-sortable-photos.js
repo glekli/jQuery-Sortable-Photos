@@ -1,5 +1,5 @@
 /*
- * jQuery Sortable Photos 1.0
+ * jQuery Sortable Photos 1.0.0
  * https://github.com/glekli/jQuery-Sortable-Photos
  *
  * Sortable photo grid widget for jQuery UI.

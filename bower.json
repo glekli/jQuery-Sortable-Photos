@@ -1,0 +1,30 @@
+{
+  "name": "jquery-sortable-photos",
+  "homepage": "https://github.com/glekli/jQuery-Sortable-Photos",
+  "authors": [
+    "Gergely Lekli <glekli@users.noreply.github.com>"
+  ],
+  "description": "Sortable photo grid widget for jQuery UI.",
+  "main": "jquery-sortable-photos.js",
+  "keywords": [
+    "jquery",
+    "photos",
+    "gallery",
+    "album",
+    "responsive",
+    "sortable",
+    "grid"
+  ],
+  "dependencies": {
+    "jquery": ">=1.6",
+    "jquery.ui": ">=1.8"
+  },
+  "license": "GPL-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
