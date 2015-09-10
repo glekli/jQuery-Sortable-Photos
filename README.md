@@ -16,7 +16,12 @@ http://glekli.github.io/jQuery-Sortable-Photos/
 
 ## Installation
 
-* [Download](https://github.com/glekli/jQuery-Sortable-Photos/releases) the latest release.
+* Install using Bower OR download the [latest release](https://github.com/glekli/jQuery-Sortable-Photos/releases).
+
+```
+bower install jquery-sortable-photos
+```
+
 * Include the javascript file on pages where needed. Be sure to include it
 after jQuery and jQuery UI.
 
