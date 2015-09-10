@@ -324,6 +324,7 @@
         // Remove css so that the actual size can be determined.
         img.css('height', '');
         img.css('width', '');
+        img.css('max-width', 'none');
 
         row.createItem(itemElement, img.width(), img.height());
 
