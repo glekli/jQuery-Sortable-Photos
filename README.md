@@ -7,7 +7,7 @@ The photo grid is arranged in such a way that the height of the images in each r
 Try the demo:
 http://glekli.github.io/jQuery-Sortable-Photos/
 
-![Demo Screenshot](http://glekli.github.io/jQuery-Sortable-Photos/img/demo.png "Demo Screenshot")
+![Demo Screenshot](https://glekli.github.io/jQuery-Sortable-Photos/img/demo.png "Demo Screenshot")
 
 ## Requirements
 
