@@ -1,4 +1,10 @@
 $(function () {
+  var placeholders = [
+    'http://lorempixel.com/%w/%h/',
+    'http://placeimg.com/%w/%h/any',
+    'http://placehold.it/%wx%h'
+  ];
+  var activePlaceholder = 0;
 
   // Renders the grid with random images.
   function renderImages() {
@@ -21,8 +27,10 @@ $(function () {
     for (var i = 0; i < count; i++) {
       var w = baseSize + 50 * Math.round(5 * Math.random());
       var h = baseSize + 50 * Math.round(5 * Math.random());
-      var url = 'http://placeimg.com/' + w + '/' + h + '/any';
-      // var url = 'http://lorempixel.com/' + w + '/' + h + '/';
+      var url = placeholders[activePlaceholder];
+
+      url = url.replace('%w', w);
+      url = url.replace('%h', h);
 
       $('.photo-grid-container').append('<div class="photo-grid-item"><img width="' + w + '" height="' + h + '" src="' + url + '"></div>');
     }
@@ -35,6 +43,14 @@ $(function () {
       beforeArrange: function (event, data) {
       },
       afterDrop: function (event, data) {
+      }
+    });
+
+    // Check for image loading error and switch placeholder service.
+    $('.photo-grid-container img').first().error(function () {
+      if (activePlaceholder < (placeholders.length - 1)) {
+        activePlaceholder++;
+        renderImages();
       }
     });
 
