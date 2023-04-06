@@ -1,7 +1,9 @@
 $(function () {
   var placeholders = [
-    'http://lorempixel.com/%w/%h/',
-    'http://placeimg.com/%w/%h/any',
+    'https://picsum.photos/%w/%h',
+    'https://placebear.com/%w/%h',
+    'https://placekitten.com/%w/%h',
+    'https://loremflickr.com/%w/%h',
     'http://placehold.it/%wx%h'
   ];
   var activePlaceholder = 0;
